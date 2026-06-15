@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">AfricaMart</string>
+    <string name="title_activity_main">AfricaMart</string>
+    <string name="package_name">co.africamart.app</string>
+    <string name="custom_url_scheme">co.africamart.app</string>
+</resources>

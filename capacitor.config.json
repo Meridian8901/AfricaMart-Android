@@ -1,0 +1,13 @@
+{
+  "appId": "co.africamart.app",
+  "appName": "AfricaMart",
+  "webDir": "www",
+  "backgroundColor": "#0D1B2A",
+  "server": {
+    "url": "https://africamart.co",
+    "androidScheme": "https"
+  },
+  "android": {
+    "backgroundColor": "#0D1B2A"
+  }
+}
