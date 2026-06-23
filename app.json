@@ -1,0 +1,44 @@
+{
+  "expo": {
+    "name": "AfricaMart",
+    "slug": "africamart",
+    "scheme": "co.africamart.app",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "backgroundColor": "#0D1B2A",
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "co.africamart.app"
+    },
+    "android": {
+      "package": "co.africamart.app",
+      "adaptiveIcon": {
+        "backgroundColor": "#0D1B2A",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "AfricaMart needs access to your photos to upload product images and store branding."
+        }
+      ],
+      [
+        "expo-document-picker",
+        {
+          "iCloudContainerEnvironment": "Production"
+        }
+      ],
+      "@react-native-community/datetimepicker"
+    ]
+  }
+}
