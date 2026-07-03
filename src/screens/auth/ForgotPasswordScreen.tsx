@@ -49,7 +49,7 @@ export default function ForgotPasswordScreen({ navigation }: Props) {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Reset your password</Text>
-      <Text style={styles.subtitle}>We'll email you a link to set a new password.</Text>
+      <Text style={styles.subtitle}>We&apos;ll email you a link to set a new password.</Text>
 
       <TextInput
         style={styles.input}

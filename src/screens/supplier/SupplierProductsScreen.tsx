@@ -60,7 +60,7 @@ export default function SupplierProductsScreen({ navigation }: Props) {
         data={products}
         keyExtractor={(p) => p.id}
         contentContainerStyle={styles.list}
-        ListEmptyComponent={<Text style={styles.empty}>You haven't listed any products yet.</Text>}
+        ListEmptyComponent={<Text style={styles.empty}>You haven&apos;t listed any products yet.</Text>}
         renderItem={({ item }) => (
           <TouchableOpacity style={styles.card} onPress={() => navigation.navigate("SupplierProductEdit", { productId: item.id })}>
             <View style={styles.cardHeader}>

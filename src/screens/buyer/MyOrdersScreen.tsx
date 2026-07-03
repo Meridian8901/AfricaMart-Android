@@ -46,11 +46,7 @@ export default function MyOrdersScreen({ navigation }: Props) {
       contentContainerStyle={styles.list}
       ListEmptyComponent={<Text style={styles.empty}>No orders yet.</Text>}
       renderItem={({ item }) => (
-        <TouchableOpacity
-          style={styles.card}
-          disabled={!item.supplierSlug}
-          onPress={() => item.supplierSlug && navigation.navigate("Storefront", { slug: item.supplierSlug })}
-        >
+        <TouchableOpacity style={styles.card} onPress={() => navigation.navigate("OrderDetail", { orderId: item.id })}>
           <Text style={styles.title}>{item.productName}</Text>
           <Text style={styles.meta}>{item.supplierName ?? "Supplier"}</Text>
           <View style={styles.footer}>

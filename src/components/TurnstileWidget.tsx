@@ -76,6 +76,8 @@ const TurnstileWidget = forwardRef<TurnstileWidgetHandle, Props>(({ onToken, onE
   );
 });
 
+TurnstileWidget.displayName = "TurnstileWidget";
+
 export default TurnstileWidget;
 
 const styles = StyleSheet.create({
