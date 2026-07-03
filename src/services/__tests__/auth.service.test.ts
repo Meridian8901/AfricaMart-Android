@@ -1,11 +1,12 @@
+import { buildAuthState } from "../auth.service";
+import type { User } from "@supabase/supabase-js";
+
 // auth.service.ts imports the real Supabase client at module scope (for its
 // other exports), which pulls in AsyncStorage — unavailable outside a native
 // runtime. buildAuthState itself is pure and never touches supabase, so mock
 // the client module out rather than exercising the whole native storage chain.
+// (jest.mock calls are hoisted above imports regardless of source position.)
 jest.mock("../../lib/supabaseClient", () => ({ supabase: {} }));
-
-import { buildAuthState } from "../auth.service";
-import type { User } from "@supabase/supabase-js";
 
 function makeUser(overrides: Partial<User> & { user_metadata?: Record<string, unknown> } = {}): User {
   return {

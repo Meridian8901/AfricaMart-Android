@@ -44,7 +44,7 @@ export default function MyRFQsScreen({ navigation }: Props) {
       data={rfqs}
       keyExtractor={(r) => r.id}
       contentContainerStyle={styles.list}
-      ListEmptyComponent={<Text style={styles.empty}>You haven't posted any RFQs yet.</Text>}
+      ListEmptyComponent={<Text style={styles.empty}>You haven&apos;t posted any RFQs yet.</Text>}
       renderItem={({ item }) => (
         <TouchableOpacity style={styles.card} onPress={() => navigation.navigate("RFQDetail", { rfqId: item.id })}>
           <Text style={styles.title}>{item.title}</Text>

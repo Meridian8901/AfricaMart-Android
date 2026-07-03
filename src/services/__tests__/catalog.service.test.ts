@@ -1,12 +1,13 @@
+import { supabase } from "../../lib/supabaseClient";
+import { searchProducts } from "../catalog.service";
+
 // Demonstrates the pattern for testing a service function that calls the
 // Supabase client directly: mock "../../lib/supabaseClient" and stub out
 // just the client methods the function under test actually calls.
+// (jest.mock calls are hoisted above imports regardless of source position.)
 jest.mock("../../lib/supabaseClient", () => ({
   supabase: { rpc: jest.fn() },
 }));
-
-import { supabase } from "../../lib/supabaseClient";
-import { searchProducts } from "../catalog.service";
 
 const mockRpc = supabase.rpc as jest.Mock;
 

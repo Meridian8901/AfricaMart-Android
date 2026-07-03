@@ -1,3 +1,5 @@
+import { submitReview } from "../storefront.service";
+
 // Same mocking pattern as catalog.service.test.ts, but for the chainable
 // query-builder style calls (`.from().insert().select().single()`) used by
 // most of the write-path service functions.
@@ -14,8 +16,6 @@ const mockFrom = jest.fn();
 jest.mock("../../lib/supabaseClient", () => ({
   supabase: { from: (...args: unknown[]) => mockFrom(...args) },
 }));
-
-import { submitReview } from "../storefront.service";
 
 describe("submitReview", () => {
   beforeEach(() => {
