@@ -72,9 +72,13 @@ _Last reviewed against the working tree: 2026-07-03 (engineering-health pass app
   star rating + text, reachable from an order's detail screen
 - `EXPO_PUBLIC_*` env var support in `src/config/env.ts` (`.env`/`.env.example`),
   so a local build can point at a different backend without code changes
-- Jest test suite (`jest-expo`) covering the mapper layer, `buildAuthState`,
-  and a mocked-Supabase-client pattern for service functions
-- GitHub Actions CI (`.github/workflows/ci.yml`) — typecheck + test on push/PR to `main`
+- Jest test suite (`jest-expo`, 42 tests across 8 files) covering the mapper
+  layer, `buildAuthState`, and representative read/write/multi-step coverage
+  for every `*.service.ts` file via a shared chainable Supabase mock
+  (`src/services/__tests__/testUtils.ts`)
+- ESLint (`eslint-config-expo/flat`), with the errors it surfaced on the
+  existing codebase fixed
+- GitHub Actions CI (`.github/workflows/ci.yml`) — typecheck + lint + test on push/PR to `main`
 
 ## 2. Explicitly out of scope for this app (per README)
 
@@ -92,11 +96,12 @@ _Last reviewed against the working tree: 2026-07-03 (engineering-health pass app
 - Google OAuth requires manual one-time setup on the Supabase dashboard
   (enable Google provider, add the mobile redirect URL) that may not be done
   yet on the live project — confirm before relying on Google sign-in in testing.
-- Test coverage is intentionally partial (mappers + `buildAuthState` + one
-  service function per mocking pattern) — no coverage yet for screens,
-  navigation, or the bulk of the CRUD/upload service functions.
-- CI runs typecheck + test only — no linter is configured in the repo, so CI
-  doesn't catch style/lint issues.
+- Test coverage is representative, not exhaustive — file-upload helpers,
+  `getAnalytics`, and screens/navigation aren't covered (see
+  `PROJECT_OVERVIEW.md` §10 for why each was left out).
+- A handful of pre-existing `react-hooks/exhaustive-deps` and one
+  `array-type` ESLint warning remain (don't fail CI, but worth cleaning up —
+  see `PROJECT_OVERVIEW.md` §10).
 - The env-var split (`EXPO_PUBLIC_*` in `.env`) only builds the *mechanism*
   for a dev/staging override — there is still only one real backend
   (production); a genuine staging Supabase project hasn't been created.
@@ -130,7 +135,8 @@ just a sensible backlog to pick from.
 **Engineering health follow-ups**
 8. Stand up a real staging Supabase project and populate `.env.staging`-style
    values, now that the env-var override mechanism exists (§1, §3).
-9. Add ESLint (rule set/plugin choice is a separate decision) and wire it
-   into the new CI workflow.
-10. Expand test coverage to the remaining service functions and, if a
-    device/emulator testing story is set up, the new screens.
+9. Clean up the remaining `react-hooks/exhaustive-deps` warnings in
+   `RootNavigator`, `BrowseScreen`, `HomeScreen` (verify each effect's
+   intended re-run behavior before changing its dependency array).
+10. Set up a device/emulator or component-testing story so screens and
+    navigation can be covered, not just the service layer.

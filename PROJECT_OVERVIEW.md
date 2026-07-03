@@ -238,24 +238,42 @@ to get running — see §7 to point at a different backend locally.
 - **Tests**: `npm test` runs Jest (`jest-expo` preset, pinned to
   `jest-expo@54.0.17` to match the installed Expo SDK 54 — the latest
   `jest-expo` targets SDK 57 and will not resolve against this project's
-  React/React Native versions). Coverage is deliberately scoped to:
+  React/React Native versions). `jest.config.js` restricts `testMatch` to
+  `*.test.ts` so shared helpers can live in `__tests__/` alongside the tests
+  without Jest trying to run them as suites. Coverage:
   - `src/services/__tests__/mappers.test.ts` — thorough coverage of every
     pure mapper function (`mapProduct`, `mapSupplier`, `mapOrder`, `mapReview`,
     `mapRFQ`, `mapQuote`, `mapCountry`/`mapCurrency`/`mapCategory`, `timeAgo`,
     `formatDeadline`, `formatMonthYear`) — no mocking needed.
   - `src/services/__tests__/auth.service.test.ts` — `buildAuthState`, which
     indirectly exercises the unexported `initials()` helper through its output.
-  - `src/services/__tests__/catalog.service.test.ts` and
-    `.../storefront.service.test.ts` — one function each (`searchProducts`,
-    `submitReview`) demonstrating the pattern for testing a function that
-    calls the real Supabase client: `jest.mock("../../lib/supabaseClient")`
-    with a fake `rpc`/chainable query-builder stub. Copy this pattern for
-    future service tests rather than mocking the whole Supabase SDK.
-  - The other services (thin CRUD/upload wrappers) aren't covered — testing
-    them meaningfully would mean re-implementing a fake Postgres/Storage
-    behind the mock, for little payoff over what the pattern above already proves.
+  - One representative service test file per remaining `*.service.ts`
+    (`catalog`, `storefront`, `buyer`, `rfq`, `supplier`, `bootstrap`),
+    covering 1-3 functions each rather than every export — enough to prove
+    the read path, a write/update path, and (in `rfq.service.test.ts`'s
+    `acceptQuote` case) a multi-step read-then-write business flow. All of
+    them use the same pattern: `jest.mock("../../lib/supabaseClient")` plus
+    `makeQueryBuilder` (`src/services/__tests__/testUtils.ts`) — a fake
+    chainable query builder (every filter method returns itself, `.single()`/
+    `.maybeSingle()` resolve directly, and the builder itself is thenable for
+    chains that get awaited without a terminal call) — and a `jest.fn()`
+    stand-in for `supabase.rpc` where needed. Copy this pattern for any new
+    service test rather than mocking the whole Supabase SDK.
+  - Not covered: file-upload helpers (`uploadSupplierMedia` et al. — mocking
+    `fetch`+`Blob`+Storage for little payoff), `getAnalytics` (six
+    sequential/parallel queries — high mocking cost for one function), and
+    screens/navigation (no on-device or component-testing setup exists yet).
+
+- **Lint**: `npm run lint` runs ESLint via `eslint.config.js`
+  (`eslint-config-expo/flat`, Expo's official base config — set up per
+  Expo's current ESLint guide, checked before implementing). Fixed the 5
+  real errors it surfaced on the existing codebase (a `forwardRef` component
+  missing `displayName`, and a few unescaped `'` characters in JSX text).
+  Left standing: a handful of `react-hooks/exhaustive-deps` warnings on
+  pre-existing `useEffect` calls and one `array-type` warning — warnings
+  don't fail `npm run lint`/CI, and changing hook dependency arrays risks
+  altering runtime behavior (e.g. an intentional run-once-on-mount effect),
+  so that's left as a follow-up rather than a drive-by fix.
 
 - **CI**: `.github/workflows/ci.yml` runs on push/PR to `main` —
-  `npm ci` → `npx tsc --noEmit` → `npm test`. Deliberately does not run a
-  linter: there's no existing ESLint config in this repo, and standing one
-  up (rule set, plugins) is a separate decision left for later.
+  `npm ci` → `npx tsc --noEmit` → `npm run lint` → `npm test`.
