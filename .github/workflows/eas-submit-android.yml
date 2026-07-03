@@ -1,0 +1,46 @@
+name: EAS Submit (Android → Play Store)
+
+# Manual only, and only usable once:
+#  1. The app exists in Play Console and at least one release has been
+#     uploaded there manually (Google requires this for every app before
+#     API-based submission works).
+#  2. A Google Play service account JSON key has been created (Play
+#     Console → Setup → API access) and saved as the GOOGLE_SERVICE_ACCOUNT_KEY
+#     GitHub secret (the full JSON file contents, not a path).
+# See PROJECT_OVERVIEW.md §8 for the full runbook.
+on:
+  workflow_dispatch:
+    inputs:
+      build_id:
+        description: "EAS build ID to submit (from an eas-build-android run, or the EAS dashboard). Leave blank to submit the latest production build."
+        type: string
+        required: false
+
+jobs:
+  submit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - run: npm ci
+
+      - name: Write service account key
+        run: echo '${{ secrets.GOOGLE_SERVICE_ACCOUNT_KEY }}' > google-service-account.json
+
+      - name: Submit to Play Store
+        run: |
+          if [ -n "${{ inputs.build_id }}" ]; then
+            eas submit --platform android --profile production --id ${{ inputs.build_id }} --non-interactive
+          else
+            eas submit --platform android --profile production --latest --non-interactive
+          fi

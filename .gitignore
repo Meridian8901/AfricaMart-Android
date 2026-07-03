@@ -33,6 +33,9 @@ yarn-error.*
 # local env files
 .env*.local
 
+# Play Store submission credentials (never commit — see PROJECT_OVERVIEW.md §8)
+google-service-account.json
+
 # typescript
 *.tsbuildinfo
 

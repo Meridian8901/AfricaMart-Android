@@ -1,0 +1,31 @@
+name: EAS Build (Android)
+
+on:
+  workflow_dispatch:
+    inputs:
+      profile:
+        description: "eas.json build profile"
+        type: choice
+        options: [preview, production]
+        default: production
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - run: npm ci
+
+      - name: Build on EAS
+        run: eas build --platform android --profile ${{ inputs.profile }} --non-interactive
