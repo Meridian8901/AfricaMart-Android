@@ -219,8 +219,51 @@ manual/business decision outside this repo's code.
 - Plugins: `expo-image-picker` (photo library access, for product images/branding),
   `expo-document-picker` (KYC doc uploads), `@react-native-community/datetimepicker`
 
-To build: `eas build --profile preview --platform android` (APK) or
-`eas build --profile production --platform android` (AAB for store).
+To build locally/ad-hoc: `eas build --profile preview --platform android`
+(APK) or `eas build --profile production --platform android` (AAB for store).
+
+### CI/CD: building and submitting from GitHub Actions
+
+Two manual (`workflow_dispatch`-only) workflows — not triggered
+automatically on push, since EAS builds consume account quota and Play
+Store submission is not something to fire unattended:
+
+- **`.github/workflows/eas-build-android.yml`** — usable today. Builds on
+  EAS's cloud infrastructure (no Android SDK needed on the runner). Requires
+  one GitHub secret: `EXPO_TOKEN`, a personal access token from
+  https://expo.dev/settings/access-tokens. Trigger it from the Actions tab,
+  choosing the `preview` or `production` profile.
+- **`.github/workflows/eas-submit-android.yml`** — submits a build to the
+  Play Store via `eas submit`. **Not usable yet** — see the runbook below
+  for what has to happen first.
+
+**Runbook: getting from here to an automated Play Store pipeline**
+
+1. Add the `EXPO_TOKEN` secret (see above) and run `eas-build-android`
+   with the `production` profile to produce a signed AAB.
+2. **Create the app in Google Play Console** (app name, package
+   `co.africamart.app`, store listing, content rating, data-safety form —
+   the app touches photos, documents, and account data, per the roadmap doc).
+3. **Upload that first AAB manually** through the Play Console UI (Internal
+   testing track is the safe default to start with). This is a hard Google
+   requirement — the Play Store API rejects submissions for an app that has
+   never had a manual release, so this step can't be automated away.
+4. **Create a Google Play service account**: Play Console → Setup → API
+   access → create/link a Google Cloud service account, grant it release
+   permissions for this app, and download its JSON key.
+5. Add that JSON's full contents as a GitHub secret named
+   `GOOGLE_SERVICE_ACCOUNT_KEY`. Do **not** commit the JSON file itself —
+   `google-service-account.json` is gitignored for exactly this reason.
+6. From then on, `eas-submit-android` can submit any build produced by
+   `eas-build-android` (pass its build ID, or leave blank for the latest
+   production build) to the **internal testing** track (`eas.json`'s
+   `submit.production.android.track` — deliberately not `production`, so an
+   automated submission can't push straight to public release; promote from
+   internal → production manually in Play Console once you're confident).
+
+Before step 2, also resolve the `RECORD_AUDIO` permission question (§2 /
+roadmap doc) — an unused dangerous permission draws extra Play Console
+review scrutiny.
 
 ## 9. Local development
 

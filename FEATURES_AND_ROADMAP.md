@@ -79,6 +79,11 @@ _Last reviewed against the working tree: 2026-07-03 (engineering-health pass app
 - ESLint (`eslint-config-expo/flat`), with the errors it surfaced on the
   existing codebase fixed
 - GitHub Actions CI (`.github/workflows/ci.yml`) — typecheck + lint + test on push/PR to `main`
+- GitHub Actions CD: `eas-build-android.yml` (manual trigger, builds APK/AAB
+  on EAS's cloud infra — usable today with an `EXPO_TOKEN` secret) and
+  `eas-submit-android.yml` (manual trigger, submits to Play Store's internal
+  testing track — not usable until the Play Console runbook in
+  `PROJECT_OVERVIEW.md` §8 is completed)
 
 ## 2. Explicitly out of scope for this app (per README)
 
@@ -112,12 +117,17 @@ Ordered roughly by what would most affect a real launch; not a commitment,
 just a sensible backlog to pick from.
 
 **Before a Play Store release**
-1. Resolve the `RECORD_AUDIO` permission question (build the feature or drop it).
+1. Resolve the `RECORD_AUDIO` permission question (build the feature or drop it) —
+   flagged again in the CD runbook (`PROJECT_OVERVIEW.md` §8) since it now
+   directly blocks a clean Play Console submission.
 2. Confirm/complete the Supabase Google-auth manual setup, and test the
    full Google sign-in round trip on a real device.
-3. Add app store listing assets (screenshots, feature graphic, privacy
-   policy link) and fill in Play Console data-safety form (the app touches
-   photos, documents, and account data).
+3. Work through the CD runbook (`PROJECT_OVERVIEW.md` §8): add the
+   `EXPO_TOKEN` secret, create the Play Console app listing + store assets
+   (screenshots, feature graphic, privacy policy link, data-safety form —
+   the app touches photos, documents, and account data), do the required
+   manual first upload, then create the Play service account and add
+   `GOOGLE_SERVICE_ACCOUNT_KEY` to unlock automated submission.
 4. Decide on and pin an Expo SDK version deliberately (see the SDK-version
    note in `PROJECT_OVERVIEW.md` §2) rather than leaving it ambiguous
    between `package.json`'s `^54` and `AGENTS.md`'s "v56" pointer.
