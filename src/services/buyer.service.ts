@@ -19,6 +19,16 @@ export async function getBuyerOrders(buyerId: string): Promise<Order[]> {
   return (data || []).map(mapOrder);
 }
 
+export async function getOrderById(orderId: string): Promise<Order | null> {
+  const { data, error } = await supabase
+    .from("orders")
+    .select("*, suppliers(name, slug, public_id)")
+    .eq("id", orderId)
+    .maybeSingle();
+  if (error) throw error;
+  return data ? mapOrder(data) : null;
+}
+
 export async function getSavedItems(buyerId: string): Promise<{ item_type: SavedItemType; item_id: string }[]> {
   const { data, error } = await supabase.from("saved_items").select("item_type, item_id").eq("buyer_id", buyerId);
   if (error) throw error;

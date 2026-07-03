@@ -26,3 +26,27 @@ export function trackProfileView(supplierId?: string | null) {
     () => {}
   );
 }
+
+export interface SubmitReviewInput {
+  supplierId: string;
+  buyerName: string;
+  buyerCountry?: string | null;
+  rating: number;
+  text: string;
+}
+
+export async function submitReview(input: SubmitReviewInput): Promise<Review> {
+  const { data, error } = await supabase
+    .from("reviews")
+    .insert({
+      supplier_id: input.supplierId,
+      buyer_name: input.buyerName,
+      buyer_country: input.buyerCountry || null,
+      rating: input.rating,
+      body: input.text,
+    })
+    .select()
+    .single();
+  if (error) throw error;
+  return mapReview(data);
+}

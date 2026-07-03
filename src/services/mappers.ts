@@ -253,6 +253,7 @@ export function mapQuote(row: any): Quote {
 export interface Order {
   id: string;
   productName: string;
+  supplierId: string | null;
   supplierName: string | null;
   supplierSlug: string | null;
   supplierPublicId: string | null;
@@ -267,6 +268,7 @@ export function mapOrder(row: any): Order {
   return {
     id: row.id,
     productName: row.product_name,
+    supplierId: row.supplier_id || null,
     supplierName: sup.name || null,
     supplierSlug: sup.slug || null,
     supplierPublicId: sup.public_id || null,

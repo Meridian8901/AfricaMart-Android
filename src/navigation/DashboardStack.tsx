@@ -2,6 +2,8 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import DashboardScreen from "../screens/DashboardScreen";
 import MyRFQsScreen from "../screens/buyer/MyRFQsScreen";
 import MyOrdersScreen from "../screens/buyer/MyOrdersScreen";
+import OrderDetailScreen from "../screens/buyer/OrderDetailScreen";
+import ReviewSubmitScreen from "../screens/buyer/ReviewSubmitScreen";
 import SavedItemsScreen from "../screens/buyer/SavedItemsScreen";
 import BuyerSettingsScreen from "../screens/buyer/BuyerSettingsScreen";
 import RFQDetailScreen from "../screens/rfq/RFQDetailScreen";
@@ -23,6 +25,8 @@ export type DashboardStackParamList = {
   Dashboard: undefined;
   MyRFQs: undefined;
   MyOrders: undefined;
+  OrderDetail: { orderId: string };
+  ReviewSubmit: { supplierId: string; supplierName: string };
   SavedItems: undefined;
   BuyerSettings: undefined;
   RFQDetail: { rfqId: string };
@@ -48,6 +52,8 @@ export default function DashboardStack() {
       <Stack.Screen name="Dashboard" component={DashboardScreen} options={{ title: "Dashboard" }} />
       <Stack.Screen name="MyRFQs" component={MyRFQsScreen} options={{ title: "My RFQs" }} />
       <Stack.Screen name="MyOrders" component={MyOrdersScreen} options={{ title: "My Orders" }} />
+      <Stack.Screen name="OrderDetail" component={OrderDetailScreen} options={{ title: "Order" }} />
+      <Stack.Screen name="ReviewSubmit" component={ReviewSubmitScreen} options={{ title: "Write a review" }} />
       <Stack.Screen name="SavedItems" component={SavedItemsScreen} options={{ title: "Saved items" }} />
       <Stack.Screen name="BuyerSettings" component={BuyerSettingsScreen} options={{ title: "Settings" }} />
       <Stack.Screen name="RFQDetail" component={RFQDetailScreen} options={{ title: "RFQ" }} />
